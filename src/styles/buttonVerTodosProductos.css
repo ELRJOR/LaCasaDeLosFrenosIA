@@ -1,0 +1,31 @@
+/* Efectos animados para los bordes del botón */
+@keyframes line1 {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+@keyframes line2 {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+@keyframes line3 {
+  0% { right: -100%; }
+  100% { right: 100%; }
+}
+@keyframes line4 {
+  0% { bottom: -100%; }
+  100% { bottom: 100%; }
+}
+
+/* Clases utilitarias para cada lado */
+.animate-line1 {
+  animation: line1 2s linear infinite;
+}
+.animate-line2 {
+  animation: line2 2s linear infinite 0.5s;
+}
+.animate-line3 {
+  animation: line3 2s linear infinite 1s;
+}
+.animate-line4 {
+  animation: line4 2s linear infinite 1.5s;
+}

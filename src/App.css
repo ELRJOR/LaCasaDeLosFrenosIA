@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+  *:focus {
+    @apply outline-none ring-0 border-acento;
+  }
+}

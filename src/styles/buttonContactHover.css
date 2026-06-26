@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:900i');
+
+.nav-hover {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: white;
+    border: 2px solid #7FA82C; 
+  transition: 0.4s ease;
+  box-shadow: 4px 4px 0 black;
+  transform: skewX(-12deg);
+}
+
+.nav-hover span {
+  transform: skewX(12deg);
+}
+
+.nav-hover:hover {
+  background: #7FA82C;
+  color: white;
+  box-shadow: 6px 6px 0 #FFFF;
+}
+
+.nav-hover:hover span {
+  font-weight: bold;
+}
