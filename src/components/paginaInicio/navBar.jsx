@@ -31,7 +31,8 @@ const Navbar = () => {
     { name: 'PRODUCTOS', id: 'productos', route: '/catalogo' },
     { name: 'ENCUÉNTRANOS', id: 'encuentranos', route: '/encuentranos' },
     { name: '¿QUIÉNES SOMOS?', id: 'catalogos', route: '/nosotros' },
-    { name: 'CONTACTO', id: 'contacto', route: '/contacto' }
+    { name: 'CONTACTO', id: 'contacto', route: '/contacto' },
+    { name: 'LOGIN', id: 'login', route: '/loginAdmin' }
   ];
 
 
@@ -108,11 +109,10 @@ const Navbar = () => {
         </Link>
         <div className="flex items-center">
           <ul className="menu-hover flex gap-6 items-center">
-            {menuItems.slice(0, 4).map((item) => (
-              <li key={item.id}><Link to={item.route}>{item.name}</Link></li>
+                {menuItems.map((item) => (
+                <li key={item.id}><Link to={item.route}>{item.name}</Link></li>
             ))}
           </ul>
-          <Link to="/contacto" className="nav-hover ml-6 text-white uppercase font-medium">Contacto</Link>
         </div>
       </nav>
 
