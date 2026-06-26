@@ -36,6 +36,15 @@ export const renombrarConversacion = async (id, titulo) => {
   return res.json();
 };
 
+export const eliminarConversacion = async (id) => {
+  const res = await fetch(`${CONVERSATIONS_URL}/${id}`, {
+    method: "DELETE",
+    headers: authHeaders()
+  });
+  if (!res.ok) throw new Error("Error al eliminar conversación");
+  return res.json().catch(() => ({}));
+};
+
 // ─── MENSAJES ─────────────────────────────────────────────────────────────────
 
 export const obtenerMensajes = async (conversationId) => {

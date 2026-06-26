@@ -4,11 +4,13 @@ import {
   IoSend,
   IoSparkles,
   IoChatbubbleEllipses,
+  IoTrash,
   IoMic,
   IoMicOff
 } from "react-icons/io5";
 import {
   obtenerConversaciones,
+  eliminarConversacion,
   crearConversacion,
   renombrarConversacion,
   obtenerMensajes,
@@ -94,7 +96,24 @@ export default function AIChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // ── 3. Crear nueva conversación ──────────────────────────────────────────
+  // ── 3. Eliminar conversación ────────────────────────────────────────────
+  const eliminarChat = async (e, chatId) => {
+    e.stopPropagation(); // Evitar que active el chat al hacer click
+    try {
+      await eliminarConversacion(chatId);
+      setConversations(prev => prev.filter(c => c.id !== chatId));
+      // Si se elimina el chat activo, activar el primero disponible
+      if (activeChat === chatId) {
+        const remaining = conversations.filter(c => c.id !== chatId);
+        setActiveChat(remaining.length > 0 ? remaining[0].id : null);
+        setMessages([]);
+      }
+    } catch (e) {
+      console.error("Error eliminando conversación:", e);
+    }
+  };
+
+  // ── 4. Crear nueva conversación ──────────────────────────────────────────
   const createNewChat = () => {
     // Creamos un chat temporal local; la API se llama cuando el usuario envíe su primer mensaje
     const tempId = `temp-${Date.now()}`;
@@ -271,15 +290,22 @@ export default function AIChat() {
               <div
                 key={chat.id}
                 onClick={() => setActiveChat(chat.id)}
-                className={`p-3 rounded-xl cursor-pointer mb-2 transition ${
+                className={`group p-3 rounded-xl cursor-pointer mb-2 transition ${
                   activeChat === chat.id ? "bg-[#7FA82C]" : "hover:bg-gray-800"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <IoChatbubbleEllipses />
-                  <span className="text-sm truncate">
+                <div className="flex items-center gap-3 w-full">
+                  <IoChatbubbleEllipses className="shrink-0" />
+                  <span className="text-sm truncate flex-1">
                     {chat.titulo || "Sin título"}
                   </span>
+                  <button
+                    onClick={(e) => eliminarChat(e, chat.id)}
+                    className="shrink-0 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-opacity"
+                    title="Eliminar conversación"
+                  >
+                    <IoTrash size={14} />
+                  </button>
                 </div>
               </div>
             ))
