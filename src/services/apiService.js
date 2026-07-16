@@ -476,7 +476,7 @@ export const registrarMecanico = async (datos) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(datos)
-        });
+        }); 
 
         if (!response.ok) {
             const errorData = await response.json();
