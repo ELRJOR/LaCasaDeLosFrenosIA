@@ -468,3 +468,29 @@ export async function eliminarPedido(id) {
     }
 }
 
+export const registrarMecanico = async (datos) => {
+    try {
+        const response = await fetch(`${ADMIN_URL}/registro-mecanico`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al registrar');
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        if (error.name === 'TypeError') {
+            throw new Error('No se recibió respuesta del servidor');
+        } else {
+            throw new Error(error.message || 'Error al configurar la solicitud');
+        }
+    }
+};

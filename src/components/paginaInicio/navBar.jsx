@@ -32,7 +32,8 @@ const Navbar = () => {
     { name: 'ENCUÉNTRANOS', id: 'encuentranos', route: '/encuentranos' },
     { name: '¿QUIÉNES SOMOS?', id: 'catalogos', route: '/nosotros' },
     { name: 'CONTACTO', id: 'contacto', route: '/contacto' },
-    { name: 'LOGIN', id: 'login', route: '/loginAdmin' }
+    { name: 'LOGIN', id: 'login', route: '/loginAdmin' },
+    { name: 'REGISTRO', id: 'registro', route: '/registroAdmin' }
   ];
 
 

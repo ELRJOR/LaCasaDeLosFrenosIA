@@ -11,6 +11,7 @@ import Inicio from './pages/landing/home';
 import Footer from './pages/footer/footer';
 import Dashboard from './pages/dashboard/dashboard';
 import LoginPage from './pages/dashboard/login';
+import RegisterPage from './pages/dashboard/RegisterPage';
 import ProtectedRoute from './components/dashboard/protectedRoute';
 import Catalogo from './pages/catalog/catalogo';
 import DetalleProducto from './pages/description/DetalleProducto';
@@ -54,6 +55,7 @@ const AppContent = () => {
           <Route path="/encuentranos" element={<UbicacionEmpresa />} />
           <Route path="/contacto" element={<Contactar />} />
           <Route path="/loginAdmin" element={<LoginPage />} />
+          <Route path="/registroAdmin" element={<RegisterPage />} />
           <Route
             path="/dashboard"
             element={
