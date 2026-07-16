@@ -5,7 +5,7 @@ import '../../styles/menuHover.css';
 import '../../styles/buttonContactHover.css';
 import logo from '../../assets/images/logo.png';
 
-const Navbar = () => {
+const Navbar = () => { 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Estado para mostrar/ocultar el botón de subir
   const [showScrollBtn, setShowScrollBtn] = useState(false);
