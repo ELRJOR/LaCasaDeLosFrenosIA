@@ -258,7 +258,7 @@ export default function AIChat() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="flex bg-white rounded-3xl shadow-sm overflow-hidden relative" style={{ height: "calc(100dvh - 160px)" }}>
+    <div className="flex bg-white rounded-3xl shadow-sm overflow-hidden relative w-full" style={{ height: "calc(100dvh - 160px)" }}>
 
       {/* OVERLAY móvil */}
       {sidebarOpen && (
@@ -348,7 +348,7 @@ export default function AIChat() {
       </div>
 
       {/* CHAT */}
-      <div className="flex-1 flex flex-col bg-gray-50 min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-gray-50 min-w-0 w-0 overflow-hidden">
 
         {/* HEADER */}
         <div className="bg-white border-b">
@@ -400,7 +400,7 @@ export default function AIChat() {
                   }`}
                 >
                   <div
-                    className={`max-w-[80%] md:max-w-3xl px-4 py-3 md:px-5 md:py-4 rounded-2xl md:rounded-3xl ${
+                    className={`max-w-[75%] md:max-w-3xl px-3 py-2 md:px-5 md:py-4 rounded-2xl md:rounded-3xl ${
                       msg.role === "user"
                         ? "bg-[#7FA82C] text-white"
                         : "bg-white border shadow-sm"
