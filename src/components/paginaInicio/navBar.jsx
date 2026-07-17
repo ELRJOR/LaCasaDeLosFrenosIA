@@ -70,28 +70,6 @@ const Navbar = () => {
     <header className="relative w-full z-50">
       {/* Navbar Desktop - Usando bg-[#0D0F0F] con transparencia 40% para el blur */}
       <nav className="hidden md:flex items-center justify-between px-6 lg:px-10 h-[90px] bg-[#0D0F0F] border-b border-white/10 text-white gap-6">
-        {/* LOGO */}
-        <Link to="/" className="flex items-center h-full shrink-0 group">
-          <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="flex items-center h-full"
-          >
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-[60px] xl:h-[70px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
-            />
-            <h1
-              className="ml-3 uppercase font-black text-[#9DC435] tracking-tighter leading-tight"
-              style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
-            >
-              <span className="text-[16px] xl:text-[22px] block">La Casa de los</span>
-              <span className="text-[16px] xl:text-[22px] block">Frenos</span>
-            </h1>
-          </motion.div>
-        </Link>
 
         {/* MENÚ PRINCIPAL */}
         <div className="flex items-center gap-3 xl:gap-5">
