@@ -81,20 +81,20 @@ const Navbar = () => {
             <img
               src={logo}
               alt="Logo"
-              className="h-[55px] lg:h-[70px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+              className="h-[45px] xl:h-[65px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
             />
             <h1
-              className="ml-2 lg:ml-3 uppercase font-black text-[#9DC435] tracking-tighter leading-tight"
+              className="ml-2 uppercase font-black text-[#9DC435] tracking-tighter leading-tight"
               style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
             >
-              <span className="text-[16px] lg:text-[22px] block">La Casa de los</span>
-              <span className="text-[16px] lg:text-[22px] block">Frenos</span>
+              <span className="text-[13px] xl:text-[20px] block">La Casa de los</span>
+              <span className="text-[13px] xl:text-[20px] block">Frenos</span>
             </h1>
           </motion.div>
         </Link>
 
         {/* MENÚ */}
-        <ul className="menu-hover flex items-center gap-3 lg:gap-5 text-[11px] lg:text-[13px] font-bold tracking-wider flex-wrap justify-end">
+        <ul className="menu-hover flex items-center gap-4 xl:gap-6 text-[11px] xl:text-[13px] font-bold tracking-wider">
           {menuItems.map((item) => (
             <li key={item.id} className="whitespace-nowrap">
               <Link to={item.route}>{item.name}</Link>
