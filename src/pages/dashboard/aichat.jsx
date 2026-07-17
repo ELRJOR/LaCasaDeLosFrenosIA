@@ -258,7 +258,7 @@ export default function AIChat() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="h-full min-h-0 bg-white rounded-3xl shadow-sm overflow-hidden flex relative">
+    <div className="flex bg-white rounded-3xl shadow-sm overflow-hidden relative" style={{ height: "calc(100dvh - 160px)" }}>
 
       {/* OVERLAY móvil */}
       {sidebarOpen && (
@@ -271,8 +271,8 @@ export default function AIChat() {
       {/* SIDEBAR */}
       <div className={`
         absolute md:relative z-30 md:z-auto
-        w-72 md:w-80 bg-gray-900 text-white flex flex-col h-full
-        transition-transform duration-300
+        w-[280px] md:w-80 bg-gray-900 text-white flex flex-col h-full
+        transition-transform duration-300 shrink-0
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
       `}>
 
@@ -348,7 +348,7 @@ export default function AIChat() {
       </div>
 
       {/* CHAT */}
-      <div className="flex-1 flex flex-col bg-gray-50">
+      <div className="flex-1 flex flex-col bg-gray-50 min-w-0 overflow-hidden">
 
         {/* HEADER */}
         <div className="bg-white border-b">
@@ -377,8 +377,8 @@ export default function AIChat() {
         </div>
 
         {/* MENSAJES */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-1 overflow-y-auto p-3 md:p-8">
+          <div className="w-full max-w-4xl mx-auto">
 
             {loadingMsgs ? (
               <div className="flex flex-col gap-4">
@@ -400,7 +400,7 @@ export default function AIChat() {
                   }`}
                 >
                   <div
-                    className={`max-w-[85vw] md:max-w-3xl px-4 py-3 md:px-5 md:py-4 rounded-2xl md:rounded-3xl ${
+                    className={`max-w-[80%] md:max-w-3xl px-4 py-3 md:px-5 md:py-4 rounded-2xl md:rounded-3xl ${
                       msg.role === "user"
                         ? "bg-[#7FA82C] text-white"
                         : "bg-white border shadow-sm"
