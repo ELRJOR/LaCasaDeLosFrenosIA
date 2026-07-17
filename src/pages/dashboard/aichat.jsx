@@ -258,7 +258,7 @@ export default function AIChat() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="h-[calc(100dvh-80px)] md:h-[calc(100vh-120px)] bg-white rounded-3xl shadow-sm overflow-hidden flex relative">
+    <div className="h-full min-h-0 bg-white rounded-3xl shadow-sm overflow-hidden flex relative">
 
       {/* OVERLAY móvil */}
       {sidebarOpen && (
