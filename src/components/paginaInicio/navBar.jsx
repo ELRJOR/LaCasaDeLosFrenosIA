@@ -69,7 +69,7 @@ const Navbar = () => {
   return (
     <header className="relative w-full z-50">
       {/* Navbar Desktop - Usando bg-[#0D0F0F] con transparencia 40% para el blur */}
-      <nav className="hidden md:flex items-center justify-between px-4 lg:px-6 h-[100px] bg-[#0D0F0F]/40 backdrop-blur-md border-b border-white/10 text-white gap-4">
+      <nav className="hidden md:flex items-center justify-between px-6 lg:px-10 h-[90px] bg-[#0D0F0F] border-b border-white/10 text-white gap-6">
         {/* LOGO */}
         <Link to="/" className="flex items-center h-full shrink-0 group">
           <motion.div
@@ -81,21 +81,21 @@ const Navbar = () => {
             <img
               src={logo}
               alt="Logo"
-              className="h-[45px] xl:h-[65px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+              className="h-[60px] xl:h-[70px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
             />
             <h1
-              className="ml-2 uppercase font-black text-[#9DC435] tracking-tighter leading-tight"
+              className="ml-3 uppercase font-black text-[#9DC435] tracking-tighter leading-tight"
               style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
             >
-              <span className="text-[13px] xl:text-[20px] block">La Casa de los</span>
-              <span className="text-[13px] xl:text-[20px] block">Frenos</span>
+              <span className="text-[16px] xl:text-[22px] block">La Casa de los</span>
+              <span className="text-[16px] xl:text-[22px] block">Frenos</span>
             </h1>
           </motion.div>
         </Link>
 
         {/* MENÚ PRINCIPAL */}
         <div className="flex items-center gap-3 xl:gap-5">
-          <ul className="menu-hover flex items-center gap-3 xl:gap-5 text-[11px] xl:text-[13px] font-bold tracking-wider">
+          <ul className="menu-hover flex items-center gap-5 xl:gap-8 text-[12px] xl:text-[14px] font-bold tracking-wider">
             {menuItems.filter(i => !['login','registro'].includes(i.id)).map((item) => (
               <li key={item.id} className="whitespace-nowrap">
                 <Link to={item.route}>{item.name}</Link>
@@ -107,13 +107,13 @@ const Navbar = () => {
           <div className="flex items-center gap-2 ml-2 shrink-0">
             <Link
               to="/loginAdmin"
-              className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider text-white/80 hover:text-white border border-white/20 hover:border-white/50 px-3 xl:px-4 py-2 rounded-xl transition-all whitespace-nowrap"
+              className="text-[12px] xl:text-[13px] font-black uppercase tracking-wider text-white/80 hover:text-white border border-white/30 hover:border-white/60 px-4 xl:px-5 py-2.5 rounded-xl transition-all whitespace-nowrap"
             >
               Login
             </Link>
             <Link
               to="/registroAdmin"
-              className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider text-[#0D0F0F] bg-[#9DC435] hover:bg-[#b5d93e] px-3 xl:px-4 py-2 rounded-xl transition-all whitespace-nowrap"
+              className="text-[12px] xl:text-[13px] font-black uppercase tracking-wider text-[#0D0F0F] bg-[#9DC435] hover:bg-[#b5d93e] px-4 xl:px-5 py-2.5 rounded-xl transition-all whitespace-nowrap"
             >
               Registro
             </Link>
