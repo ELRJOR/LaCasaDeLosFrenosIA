@@ -258,7 +258,7 @@ export default function AIChat() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="h-[calc(100vh-120px)] bg-white rounded-3xl shadow-sm overflow-hidden flex relative">
+    <div className="h-[calc(100dvh-80px)] md:h-[calc(100vh-120px)] bg-white rounded-3xl shadow-sm overflow-hidden flex relative">
 
       {/* OVERLAY móvil */}
       {sidebarOpen && (
@@ -395,12 +395,12 @@ export default function AIChat() {
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex mb-6 ${
+                  className={`flex mb-4 md:mb-6 ${
                     msg.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
                   <div
-                    className={`max-w-3xl px-5 py-4 rounded-3xl ${
+                    className={`max-w-[85vw] md:max-w-3xl px-4 py-3 md:px-5 md:py-4 rounded-2xl md:rounded-3xl ${
                       msg.role === "user"
                         ? "bg-[#7FA82C] text-white"
                         : "bg-white border shadow-sm"
@@ -411,7 +411,7 @@ export default function AIChat() {
                         🔧 Asistente Técnico
                       </div>
                     )}
-                    <p className={msg.role === "user" ? "text-white" : "text-gray-900"}>
+                    <p className={`text-sm md:text-base leading-relaxed ${msg.role === "user" ? "text-white" : "text-gray-900"}`}>
                       {msg.content}
                     </p>
                   </div>
@@ -453,7 +453,7 @@ export default function AIChat() {
                     sendMessage();
                   }
                 }}
-                placeholder="Describe una falla o consulta una refacción..."
+                placeholder="Escribe tu consulta..."
                 className="flex-1 outline-none bg-transparent"
                 disabled={isLoading || !activeChat}
               />
