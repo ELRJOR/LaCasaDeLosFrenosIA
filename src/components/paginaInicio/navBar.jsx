@@ -69,52 +69,38 @@ const Navbar = () => {
   return (
     <header className="relative w-full z-50">
       {/* Navbar Desktop - Usando bg-[#0D0F0F] con transparencia 40% para el blur */}
-      <nav className="hidden md:flex items-center justify-between px-6 h-[100px] bg-[#0D0F0F]/40 backdrop-blur-md border-b border-white/10 text-white">
-        <Link to="/" className="flex items-center h-full">
-          <Link to="/" className="flex items-center h-full group">
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="flex items-center h-full"
+      <nav className="hidden md:flex items-center justify-between px-4 lg:px-6 h-[100px] bg-[#0D0F0F]/40 backdrop-blur-md border-b border-white/10 text-white gap-4">
+        {/* LOGO */}
+        <Link to="/" className="flex items-center h-full shrink-0 group">
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="flex items-center h-full"
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              className="h-[55px] lg:h-[70px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
+            />
+            <h1
+              className="ml-2 lg:ml-3 uppercase font-black text-[#9DC435] tracking-tighter leading-tight"
+              style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
             >
-              {/* Contenedor del Logo */}
-              <img
-                src={logo}
-                alt="Logo"
-                className="h-[60px] md:h-[80px] lg:h-[90px] w-auto object-contain flex-shrink-0 transition-transform duration-300 group-hover:scale-105"
-              />
-
-              {/* Texto Unificado al mismo tamaño con Sombra de Profundidad */}
-              <div className="ml-3 md:ml-4 flex flex-col lg:flex-row lg:items-center leading-none">
-                {/* Añadimos `textShadow` de forma local para controlarla mejor:
-        - 0 offset horizontal
-        - 2px offset vertical (hacia abajo)
-        - 4px de desenfoque (blur)
-        - Negro con 30% opacidad
-      */}
-                <h1
-                  className="uppercase font-black text-[#9DC435] tracking-tighter"
-                  style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}
-                >
-                  <span className="text-[20px] md:text-[26px] lg:text-[30px] block lg:inline">
-                    La Casa de los
-                  </span>
-                  <span className="text-[20px] md:text-[26px] lg:text-[30px] block lg:inline lg:ml-2">
-                    Frenos
-                  </span>
-                </h1>
-              </div>
-            </motion.div>
-          </Link>
+              <span className="text-[16px] lg:text-[22px] block">La Casa de los</span>
+              <span className="text-[16px] lg:text-[22px] block">Frenos</span>
+            </h1>
+          </motion.div>
         </Link>
-        <div className="flex items-center">
-          <ul className="menu-hover flex gap-6 items-center">
-                {menuItems.map((item) => (
-                <li key={item.id}><Link to={item.route}>{item.name}</Link></li>
-            ))}
-          </ul>
-        </div>
+
+        {/* MENÚ */}
+        <ul className="menu-hover flex items-center gap-3 lg:gap-5 text-[11px] lg:text-[13px] font-bold tracking-wider flex-wrap justify-end">
+          {menuItems.map((item) => (
+            <li key={item.id} className="whitespace-nowrap">
+              <Link to={item.route}>{item.name}</Link>
+            </li>
+          ))}
+        </ul>
       </nav>
 
       {/* BOTÓN VOLVER ARRIBA */}
