@@ -24,7 +24,7 @@ const LoginPage = () => {
             const response = await loginAdmin(credentials);
             if (response.error) throw new Error(response.error);
             localStorage.setItem('token', response.token);
-            navigate('/dashboard');
+            navigate('/dashboard', { state: { tab: 'AsistenteIA' } });
         } catch (err) {
             setError(err.message || 'Credenciales incorrectas');
         } finally {
@@ -34,12 +34,10 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 relative overflow-hidden">
-            {/* Decoración de fondo (Círculos difuminados) */}
             <div className="absolute top-[-10%] left-[-10%] w-72 h-72 bg-[#7FA82C]/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-[#7FA82C]/5 rounded-full blur-3xl"></div>
 
             <div className="w-full max-w-md z-10">
-                {/* Logo o Título */}
                 <motion.div 
                     className="text-center mb-8"
                     initial={{ opacity: 0, y: -20 }}
@@ -63,7 +61,6 @@ const LoginPage = () => {
                 >
                     <form className="space-y-5" onSubmit={handleSubmit}>
                         
-                        {/* Alerta de Error con Animación */}
                         <AnimatePresence>
                             {error && (
                                 <motion.div 
@@ -78,52 +75,38 @@ const LoginPage = () => {
                             )}
                         </AnimatePresence>
 
-                       {/* Campo Usuario */}
-<div className="space-y-2">
-    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">
-        Usuario
-    </label>
-    <div className="relative group">
-        <FiUser 
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#7FA82C] transition-colors z-10" 
-            size={20} 
-        />
-        <input
-            name="usuario"
-            type="text"
-            required
-            value={credentials.usuario}
-            onChange={handleInputChange}
-            placeholder="Ingresa tu usuario"
-            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-[#7FA82C]/10 focus:border-[#7FA82C] outline-none transition-all  text-gray-700 shadow-inner"
-        />
-    </div>
-</div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Usuario</label>
+                            <div className="relative group">
+                                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#7FA82C] transition-colors z-10" size={20} />
+                                <input
+                                    name="usuario"
+                                    type="text"
+                                    required
+                                    value={credentials.usuario}
+                                    onChange={handleInputChange}
+                                    placeholder="Ingresa tu usuario"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-[#7FA82C]/10 focus:border-[#7FA82C] outline-none transition-all text-gray-700 shadow-inner"
+                                />
+                            </div>
+                        </div>
 
-{/* Campo Password - Usando Ojo Nativo del Sistema */}
-<div className="space-y-2">
-    <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">
-        Contraseña
-    </label>
-    <div className="relative group">
-        {/* Mantenemos el icono de la izquierda para la coherencia visual */}
-        <FiLock 
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#7FA82C] transition-colors z-10" 
-            size={20} 
-        />
-        <input
-            name="password"
-            type="password" 
-            required
-            value={credentials.password}
-            onChange={handleInputChange}
-            placeholder="Ingresa tu contraseña"
-            /* Quitamos el pr-14 y el showPassword, dejamos que el sistema haga lo suyo */
-            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-[#7FA82C]/10 focus:border-[#7FA82C] outline-none transition-all text-gray-700 shadow-inner"
-        />
-    </div>
-</div>
-                        {/* Botón de Acción */}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-1">Contraseña</label>
+                            <div className="relative group">
+                                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#7FA82C] transition-colors z-10" size={20} />
+                                <input
+                                    name="password"
+                                    type="password"
+                                    required
+                                    value={credentials.password}
+                                    onChange={handleInputChange}
+                                    placeholder="Ingresa tu contraseña"
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-[#7FA82C]/10 focus:border-[#7FA82C] outline-none transition-all text-gray-700 shadow-inner"
+                                />
+                            </div>
+                        </div>
+
                         <div className="pt-2">
                             <button
                                 type="submit"
@@ -142,8 +125,6 @@ const LoginPage = () => {
                         </div>
                     </form>
                 </motion.div>
-
-               
             </div>
         </div>
     );

@@ -6,9 +6,7 @@ import {
   IoChatbubbleEllipses,
   IoTrash,
   IoMic,
-  IoMicOff,
-  IoMenu,
-  IoClose
+  IoMicOff
 } from "react-icons/io5";
 import {
   obtenerConversaciones,
@@ -29,7 +27,6 @@ export default function AIChat() {
   const [activeChat, setActiveChat]     = useState(null);
   const [messages, setMessages]         = useState([]);
   const [isListening, setIsListening]   = useState(false);
-  const [sidebarOpen, setSidebarOpen]   = useState(false);
   const recognitionRef = useRef(null);
   const transcriptRef   = useRef("");
   const isSendingRef    = useRef(false);
@@ -258,34 +255,14 @@ export default function AIChat() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="h-[calc(100vh-120px)] bg-white rounded-3xl shadow-sm overflow-hidden flex relative">
-
-      {/* OVERLAY móvil */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <div className="h-[calc(100vh-120px)] bg-white rounded-3xl shadow-sm overflow-hidden flex">
 
       {/* SIDEBAR */}
-      <div className={`
-        absolute md:relative z-30 md:z-auto
-        w-72 md:w-80 bg-gray-900 text-white flex flex-col h-full
-        transition-transform duration-300
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-      `}>
+      <div className="w-80 bg-gray-900 text-white flex flex-col">
 
-        <div className="p-4 border-b border-gray-800 flex gap-2">
-          {/* Botón cerrar sidebar en móvil */}
+        <div className="p-4 border-b border-gray-800">
           <button
-            onClick={() => setSidebarOpen(false)}
-            className="md:hidden bg-gray-800 p-3 rounded-xl text-white"
-          >
-            <IoClose size={18} />
-          </button>
-          <button
-            onClick={() => { createNewChat(); setSidebarOpen(false); }}
+            onClick={createNewChat}
             className="w-full bg-[#7FA82C] hover:bg-[#6e9325] transition p-3 rounded-xl flex items-center justify-center gap-2 font-bold"
           >
             <IoAdd size={20} />
@@ -352,23 +329,16 @@ export default function AIChat() {
 
         {/* HEADER */}
         <div className="bg-white border-b">
-          <div className="h-16 md:h-20 flex items-center px-4 md:px-6 gap-3">
-            {/* Botón hamburguesa móvil */}
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="md:hidden bg-gray-100 p-2 rounded-xl text-gray-700 shrink-0"
-            >
-              <IoMenu size={20} />
-            </button>
-            <div className="flex items-center gap-3 min-w-0">
+          <div className="h-20 flex items-center px-6">
+            <div className="flex items-center gap-3">
               <div className="bg-[#7FA82C] p-3 rounded-xl text-white shadow-md">
                 <IoSparkles size={22} />
               </div>
-              <div className="min-w-0">
-                <h1 className="text-base md:text-xl font-black text-gray-900 truncate">
+              <div>
+                <h1 className="text-xl font-black text-gray-900">
                   🔧 Asistente Técnico Automotriz
                 </h1>
-                <p className="text-xs md:text-sm text-gray-500 hidden sm:block">
+                <p className="text-sm text-gray-500">
                   Diagnóstico de fallas, compatibilidades y refacciones
                 </p>
               </div>
@@ -377,7 +347,7 @@ export default function AIChat() {
         </div>
 
         {/* MENSAJES */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8">
+        <div className="flex-1 overflow-y-auto p-8">
           <div className="max-w-4xl mx-auto">
 
             {loadingMsgs ? (
@@ -440,7 +410,7 @@ export default function AIChat() {
         </div>
 
         {/* INPUT */}
-        <div className="bg-white border-t p-3 md:p-5">
+        <div className="bg-white border-t p-5">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 border rounded-2xl p-3 shadow-sm bg-white">
               <input
