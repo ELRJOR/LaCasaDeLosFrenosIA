@@ -93,14 +93,32 @@ const Navbar = () => {
           </motion.div>
         </Link>
 
-        {/* MENÚ */}
-        <ul className="menu-hover flex items-center gap-4 xl:gap-6 text-[11px] xl:text-[13px] font-bold tracking-wider">
-          {menuItems.map((item) => (
-            <li key={item.id} className="whitespace-nowrap">
-              <Link to={item.route}>{item.name}</Link>
-            </li>
-          ))}
-        </ul>
+        {/* MENÚ PRINCIPAL */}
+        <div className="flex items-center gap-3 xl:gap-5">
+          <ul className="menu-hover flex items-center gap-3 xl:gap-5 text-[11px] xl:text-[13px] font-bold tracking-wider">
+            {menuItems.filter(i => !['login','registro'].includes(i.id)).map((item) => (
+              <li key={item.id} className="whitespace-nowrap">
+                <Link to={item.route}>{item.name}</Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* BOTONES LOGIN / REGISTRO */}
+          <div className="flex items-center gap-2 ml-2 shrink-0">
+            <Link
+              to="/loginAdmin"
+              className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider text-white/80 hover:text-white border border-white/20 hover:border-white/50 px-3 xl:px-4 py-2 rounded-xl transition-all whitespace-nowrap"
+            >
+              Login
+            </Link>
+            <Link
+              to="/registroAdmin"
+              className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider text-[#0D0F0F] bg-[#9DC435] hover:bg-[#b5d93e] px-3 xl:px-4 py-2 rounded-xl transition-all whitespace-nowrap"
+            >
+              Registro
+            </Link>
+          </div>
+        </div>
       </nav>
 
       {/* BOTÓN VOLVER ARRIBA */}
