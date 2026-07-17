@@ -440,9 +440,9 @@ export default function AIChat() {
         </div>
 
         {/* INPUT */}
-        <div className="bg-white border-t p-3 md:p-5">
+        <div className="bg-white border-t p-2 md:p-5">
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-3 border rounded-2xl p-3 shadow-sm bg-white">
+            <div className="flex items-center gap-2 border rounded-2xl px-3 py-2 shadow-sm bg-white">
               <input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -454,37 +454,37 @@ export default function AIChat() {
                   }
                 }}
                 placeholder="Escribe tu consulta..."
-                className="flex-1 outline-none bg-transparent"
+                className="flex-1 min-w-0 outline-none bg-transparent text-sm"
                 disabled={isLoading || !activeChat}
               />
-              {/* Botón micrófono */}
-              <button
-                onClick={toggleVoice}
-                disabled={isLoading || !activeChat}
-                title={isListening ? "Detener grabación" : "Hablar"}
-                className={`p-3 rounded-xl transition ${
-                  isListening
-                    ? "bg-red-500 text-white animate-pulse"
-                    : isLoading || !activeChat
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {isListening ? <IoMicOff size={18} /> : <IoMic size={18} />}
-              </button>
-
-              {/* Botón enviar */}
-              <button
-                onClick={sendMessage}
-                disabled={isLoading || !message.trim() || !activeChat}
-                className={`text-white p-3 rounded-xl transition ${
-                  isLoading || !message.trim() || !activeChat
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-[#7FA82C] hover:bg-[#6e9325]"
-                }`}
-              >
-                <IoSend size={18} />
-              </button>
+              {/* Botones - tamaño compacto en móvil */}
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  onClick={toggleVoice}
+                  disabled={isLoading || !activeChat}
+                  title={isListening ? "Detener grabación" : "Hablar"}
+                  className={`p-2 md:p-3 rounded-xl transition ${
+                    isListening
+                      ? "bg-red-500 text-white animate-pulse"
+                      : isLoading || !activeChat
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {isListening ? <IoMicOff size={16} /> : <IoMic size={16} />}
+                </button>
+                <button
+                  onClick={sendMessage}
+                  disabled={isLoading || !message.trim() || !activeChat}
+                  className={`text-white p-2 md:p-3 rounded-xl transition ${
+                    isLoading || !message.trim() || !activeChat
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-[#7FA82C] hover:bg-[#6e9325]"
+                  }`}
+                >
+                  <IoSend size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
