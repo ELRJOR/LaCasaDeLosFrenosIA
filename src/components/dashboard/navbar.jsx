@@ -73,9 +73,6 @@ const Navbar = ({ activeTab }) => {
           <div className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 text-left">
             Sistema / <span className="text-[#7FA82C]">{displayTab}</span>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 tracking-tight leading-none">
-            {getSaludo()}, <span className="text-[#7FA82C]">Manuel</span>
-          </h2>
         </div>
 
         <div className="flex items-center gap-4">
