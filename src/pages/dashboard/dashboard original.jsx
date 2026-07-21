@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   HiExclamationCircle, HiX, HiMail, HiCalendar, 
   HiShieldCheck, HiBell, HiGlobeAlt,
@@ -21,6 +22,14 @@ import Configuraciones from './configuraciones';
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('Inicio');
+  const location = useLocation();
+
+  // Activar tab según el state que viene del login
+  useEffect(() => {
+    if (location.state?.tab) {
+      setActiveTab(location.state.tab);
+    }
+  }, []);
   const [showBanner, setShowBanner] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -94,7 +103,7 @@ const Dashboard = () => {
           )}
         </AnimatePresence>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
+        <div className="flex-1 overflow-y-auto p-3 md:p-6 bg-gray-50/50">
           {renderContent()}
         </div>
       </div>
