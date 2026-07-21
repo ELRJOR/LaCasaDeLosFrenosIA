@@ -279,11 +279,11 @@ const Pedidos = () => {
 
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            <h1 className="text-5xl font-bold text-gray-800 mb-6">Pedidos</h1>
+        <div className="p-3 md:p-6 bg-gray-50 min-h-screen">
+            <h1 className="text-2xl md:text-5xl font-bold text-gray-800 mb-4 md:mb-6">Pedidos</h1>
 
             {/* Barra de herramientas de Pedidos (Unificada y Coherente) */}
-            <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-md p-3 md:p-6 mb-4 md:mb-6 border border-gray-100">
                 <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-6">
 
                     {/* LADO IZQUIERDO: Búsqueda y Filtros de Estado/Fecha */}
@@ -381,13 +381,13 @@ const Pedidos = () => {
                 </div>
             ) : (
                 <div className="rounded-xl shadow-xl overflow-hidden border border-gray-200 bg-white">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto -mx-3 md:mx-0">
                         <table className="min-w-full divide-y divide-gray-300">
                             <thead className="bg-gray-100">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">CLIENTE</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">FECHA</th>
-                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider text-center">PRODUCTOS</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider hidden sm:table-cell">FECHA</th>
+                                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider text-center hidden md:table-cell">PRODUCTOS</th>
                                     <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">ESTADO</th>
                                     <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">ACCIONES</th>
                                 </tr>
@@ -403,12 +403,12 @@ const Pedidos = () => {
                                         </td>
 
                                         {/* FECHA */}
-                                        <td className="px-6 py-4 align-middle text-sm text-gray-600">
+                                        <td className="px-6 py-4 align-middle text-sm text-gray-600 hidden sm:table-cell">
                                             {new Date(pedido.fecha).toLocaleString()}
                                         </td>
 
                                         {/* CANTIDAD DE PRODUCTOS */}
-                                        <td className="px-6 py-4 align-middle text-center">
+                                        <td className="px-6 py-4 align-middle text-center hidden md:table-cell">
                                             <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-bold">
                                                 {pedido.pedido_productos?.length || 0} items
                                             </span>
@@ -430,24 +430,24 @@ const Pedidos = () => {
 
                                         {/* ACCIONES (Grandes y Robustas) */}
                                         <td className="px-6 py-4 align-middle text-right">
-                                            <div className="flex justify-end gap-3">
+                                            <div className="flex justify-end gap-1 md:gap-3">
                                                 <button
                                                     onClick={() => abrirDetalle(pedido)}
-                                                    className="p-3 bg-purple-100 text-purple-600 rounded-xl hover:bg-purple-600 hover:text-white hover:shadow-lg hover:shadow-purple-200 transition-all active:scale-90 border border-purple-200"
+                                                    className="p-2 md:p-3 bg-purple-100 text-purple-600 rounded-xl hover:bg-purple-600 hover:text-white transition-all active:scale-90 border border-purple-200"
                                                     title="Ver detalle"
                                                 >
                                                     <FiEye size={20} />
                                                 </button>
                                                 <button
                                                     onClick={() => abrirEditar(pedido)}
-                                                    className="p-3 bg-blue-100 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-90 border border-blue-200"
+                                                    className="p-2 md:p-3 bg-blue-100 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all active:scale-90 border border-blue-200"
                                                     title="Editar pedido"
                                                 >
                                                     <FiEdit2 size={20} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleEliminarPedido(pedido.id)}
-                                                    className="p-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-200 transition-all active:scale-90 border border-red-200"
+                                                    className="p-2 md:p-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all active:scale-90 border border-red-200"
                                                     title="Eliminar pedido"
                                                 >
                                                     <FiTrash2 size={20} />

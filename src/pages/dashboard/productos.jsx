@@ -254,11 +254,11 @@ const Productos = () => {
 
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            <h1 className="text-5xl font-bold text-gray-800 mb-6">Productos</h1>
+        <div className="p-3 md:p-6 bg-gray-50 min-h-screen">
+            <h1 className="text-2xl md:text-5xl font-bold text-gray-800 mb-4 md:mb-6">Productos</h1>
 
             {/* Barra de herramientas */}
-            <div className="bg-white rounded-xl shadow-md p-6 mb-6 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-md p-3 md:p-6 mb-4 md:mb-6 border border-gray-100">
                 <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-6">
 
                     {/* LADO IZQUIERDO: Búsqueda y Filtros */}
