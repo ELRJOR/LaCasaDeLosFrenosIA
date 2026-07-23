@@ -6,12 +6,22 @@ const authHeaders = () => ({
   "Authorization": `Bearer ${localStorage.getItem("token")}`
 });
 
+// ─── SESIÓN EXPIRADA ──────────────────────────────────────────────────────────
+const checkUnauthorized = (res) => {
+  if (res.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/loginAdmin";
+    throw new Error("Sesión expirada");
+  }
+};
+
 // ─── CONVERSACIONES ───────────────────────────────────────────────────────────
 
 export const obtenerConversaciones = async () => {
   const res = await fetch(CONVERSATIONS_URL, {
     headers: authHeaders()
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al obtener conversaciones");
   return res.json();
 };
@@ -22,6 +32,7 @@ export const crearConversacion = async (titulo = "Nueva consulta") => {
     headers: authHeaders(),
     body: JSON.stringify({ titulo })
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al crear conversación");
   return res.json();
 };
@@ -32,6 +43,7 @@ export const renombrarConversacion = async (id, titulo) => {
     headers: authHeaders(),
     body: JSON.stringify({ titulo })
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al renombrar conversación");
   return res.json();
 };
@@ -41,6 +53,7 @@ export const eliminarConversacion = async (id) => {
     method: "DELETE",
     headers: authHeaders()
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al eliminar conversación");
   return res.json().catch(() => ({}));
 };
@@ -51,6 +64,7 @@ export const obtenerMensajes = async (conversationId) => {
   const res = await fetch(`${CONVERSATIONS_URL}/${conversationId}/messages`, {
     headers: authHeaders()
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al obtener mensajes");
   return res.json();
 };
@@ -61,6 +75,7 @@ export const enviarMensaje = async (conversationId, content, onToken, onDone) =>
     headers: authHeaders(),
     body: JSON.stringify({ content })
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al enviar mensaje");
 
   const reader  = res.body.getReader();

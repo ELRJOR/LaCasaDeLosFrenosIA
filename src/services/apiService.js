@@ -11,11 +11,21 @@ const ADMIN_URL = `${BASE_URL}/admin`;
 const CLIENTES_URL = `${BASE_URL}/clientes`;
 const PEDIDOS_URL = `${BASE_URL}/pedidos`;
 
+// ─── SESIÓN EXPIRADA: si la API devuelve 401, limpiar token y redirigir ───────
+const checkUnauthorized = (res) => {
+    if (res.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/loginAdmin';
+        throw new Error('Sesión expirada');
+    }
+};
+
 
 
 export const fetchProductos = async () => {
     try {
         const response = await fetch(API_URL);
+        checkUnauthorized(response);
         if (!response.ok) {
             throw new Error('Error al obtener productos');
         }
@@ -44,6 +54,7 @@ export async function crearProducto(producto) {
             body: formData
         });
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             throw new Error(errorData.error || 'Error al crear producto');
@@ -76,6 +87,7 @@ export async function actualizarProducto(id, producto) {
             body: formData
         });
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             throw new Error(errorData.error || 'Error al actualizar producto');
@@ -99,6 +111,7 @@ export async function eliminarProducto(id) {
 
         console.log(`Respuesta del servidor: ${res.status} - ${res.statusText}`);
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             console.error(`Error al eliminar producto: ${errorData.error || 'Error desconocido'}`);
@@ -117,6 +130,7 @@ export async function eliminarProducto(id) {
 export async function obtenerProductoPorId(id) {
     try {
         const res = await fetch(`${API_URL}/${id}`);
+        checkUnauthorized(res);
         if (!res.ok) {
             throw new Error('Error al obtener el producto');
         }
@@ -130,6 +144,7 @@ export async function obtenerProductoPorId(id) {
 export const obtenerCategorias = async () => {
     try {
         const res = await fetch(CATEGORIAS_URL);
+        checkUnauthorized(res);
         if (!res.ok) {
             throw new Error('Error al obtener categorías');
         }
@@ -146,6 +161,7 @@ export const obtenerCategorias = async () => {
 export async function obtenerCategoriaPorId(id) {
     try {
         const res = await fetch(`${CATEGORIAS_URL}/${id}`);
+        checkUnauthorized(res);
         if (!res.ok) {
             throw new Error(`Error al obtener la categoría con ID: ${id}`);
         }
@@ -171,6 +187,7 @@ export async function crearCategoria(nombre) {
             body: JSON.stringify({ nombre }),
         });
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             console.error(`Error al crear categoría: ${errorData.error || 'Error desconocido'}`);
@@ -196,6 +213,7 @@ export async function actualizarCategoria(id, nombre) {
             body: JSON.stringify({ nombre }),
         });
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             console.error(`Error al actualizar la categoría con ID: ${id} - ${errorData.error || 'Error desconocido'}`);
@@ -217,6 +235,7 @@ export async function eliminarCategoria(id) {
             method: 'DELETE',
         });
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             console.error(`Error al eliminar categoría con ID: ${id} - ${errorData.error || 'Error desconocido'}`);
@@ -269,6 +288,7 @@ export const loginAdmin = async (credentials) => {
  export async function obtenerClientes() {
     try {
         const res = await fetch(CLIENTES_URL);
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al obtener los clientes');
         return await res.json();
     } catch (error) {
@@ -280,6 +300,7 @@ export const loginAdmin = async (credentials) => {
 export async function obtenerClientePorId(id) {
     try {
         const res = await fetch(`${CLIENTES_URL}/${id}`);
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al obtener el cliente');
         return await res.json();
     } catch (error) {
@@ -298,6 +319,7 @@ export async function crearCliente(cliente) {
             body: JSON.stringify(cliente)
         });
 
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al crear cliente');
         return await res.json();
     } catch (error) {
@@ -316,6 +338,7 @@ export async function actualizarCliente(id, cliente) {
             body: JSON.stringify(cliente)
         });
 
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al actualizar cliente');
         return await res.json();
     } catch (error) {
@@ -330,6 +353,7 @@ export async function eliminarCliente(id) {
             method: 'DELETE'
         });
 
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al eliminar cliente');
         return await res.json();
     } catch (error) {
@@ -355,6 +379,7 @@ export async function crearPedido({ cliente_id, observaciones, productos, fecha,
             body: JSON.stringify(body)
         });
 
+        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.error || 'Error al crear el pedido');
@@ -414,6 +439,7 @@ export async function actualizarPedido(id, { cliente_id, productos, fecha, estad
 
         console.log('📬 Status de respuesta del backend:', response.status);
 
+        checkUnauthorized(response);
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             console.error('❌ Error recibido del servidor:', errorData);
@@ -435,6 +461,7 @@ export async function actualizarPedido(id, { cliente_id, productos, fecha, estad
 export async function obtenerPedidos() {
     try {
         const res = await fetch(PEDIDOS_URL);
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al obtener pedidos');
         return await res.json();
     } catch (error) {
@@ -446,6 +473,7 @@ export async function obtenerPedidos() {
 export async function obtenerPedidoPorId(id) {
     try {
         const res = await fetch(`${PEDIDOS_URL}/${id}`);
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al obtener el pedido');
         return await res.json();
     } catch (error) {
@@ -460,6 +488,7 @@ export async function eliminarPedido(id) {
             method: 'DELETE'
         });
 
+        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al eliminar pedido');
         return await res.json();
     } catch (error) {
