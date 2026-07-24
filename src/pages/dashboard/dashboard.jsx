@@ -17,6 +17,7 @@ import Clientes from './clientes';
 import Pedidos from './pedidos';
 import AIChat from './aichat';
 import Ayuda from './ayuda';
+import Citas from './citas'
 import Configuraciones from './configuraciones';
 
 const Dashboard = () => {
@@ -66,6 +67,7 @@ const Dashboard = () => {
       case 'Clientes': return <Clientes />;
       case 'Pedidos': return <Pedidos />;
       case 'AsistenteIA': return <AIChat />;
+      case 'Citas': return <Citas />;
       case 'Ayuda': return <Ayuda />;
       case 'Configuraciones': return <Configuraciones />;
       default: return <Inicio />;

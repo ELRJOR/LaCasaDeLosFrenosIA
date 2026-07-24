@@ -523,3 +523,32 @@ export const registrarMecanico = async (datos) => {
         }
     }
 };
+
+export const mostrarCitas = async () => {
+    try {
+        const token = localStorage.getItem('token'); // ajusta la key si le pusiste otro nombre
+
+        const response = await fetch(`${BASE_URL}/citas`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }); 
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al mostrar');
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        if (error.name === 'TypeError') {
+            throw new Error('No se recibió respuesta del servidor');
+        } else {
+            throw new Error(error.message || 'Error al configurar la solicitud');
+        }
+    }
+};

@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   { label: 'Inicio',       tab: 'Inicio',       iconOut: IoHomeOutline,                iconFill: IoHome },
   { label: 'Productos',    tab: 'Productos',    iconOut: IoCartOutline,                iconFill: IoCart },
   { label: 'Categorías',   tab: 'Categorias',   iconOut: IoGridOutline,                iconFill: IoGrid },
-  { label: 'Clientes',     tab: 'Clientes',     iconOut: IoPeopleOutline,              iconFill: IoPeople },
+  { label: 'Citas',     tab: 'Citas',     iconOut: IoPeopleOutline,              iconFill: IoPeople },
   { label: 'Pedidos',      tab: 'Pedidos',      iconOut: IoClipboardOutline,           iconFill: IoClipboard },
   { label: 'IA',           tab: 'AsistenteIA',  iconOut: IoChatbubbleEllipsesOutline,  iconFill: IoChatbubbleEllipses },
   { label: 'Ayuda',        tab: 'Ayuda',        iconOut: IoHelpCircleOutline,          iconFill: IoHelpCircle },
