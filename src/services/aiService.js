@@ -1,59 +1,74 @@
 const BASE_URL = "https://lacasadelosfrenos-api.onrender.com";
+const ADMIN_URL = `${BASE_URL}/admin`;
 const CONVERSATIONS_URL = `${BASE_URL}/conversations`;
 
-const authHeaders = () => ({
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${localStorage.getItem("token")}`
-});
+const tryRefresh = async () => {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${ADMIN_URL}/refresh`, {
+      method: "POST",
+      credentials: "include",
+    }).finally(() => {
+      refreshPromise = null;
+    });
+  }
+  const res = await refreshPromise;
+  return res.ok;
+};
 
-// ─── SESIÓN EXPIRADA ──────────────────────────────────────────────────────────
-const checkUnauthorized = (res) => {
-  if (res.status === 401) {
-    localStorage.removeItem("token");
+const authFetch = async (url, options = {}) => {
+  const res = await fetch(url, {
+    ...options,
+    credentials: "include",
+    headers: { ...jsonHeaders, ...(options.headers || {}) },
+  });
+
+  if (res.status !== 401) return res;
+
+  const refreshed = await tryRefresh();
+
+  if (!refreshed) {
     window.location.href = "/loginAdmin";
     throw new Error("Sesión expirada");
   }
+
+  // Reintenta la request original una sola vez con la cookie renovada
+  return fetch(url, {
+    ...options,
+    credentials: "include",
+    headers: { ...jsonHeaders, ...(options.headers || {}) },
+  });
 };
 
 // ─── CONVERSACIONES ───────────────────────────────────────────────────────────
 
 export const obtenerConversaciones = async () => {
-  const res = await fetch(CONVERSATIONS_URL, {
-    headers: authHeaders()
-  });
-  checkUnauthorized(res);
+  const res = await authFetch(CONVERSATIONS_URL);
   if (!res.ok) throw new Error("Error al obtener conversaciones");
   return res.json();
 };
 
 export const crearConversacion = async (titulo = "Nueva consulta") => {
-  const res = await fetch(CONVERSATIONS_URL, {
+  const res = await authFetch(CONVERSATIONS_URL, {
     method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ titulo })
+    body: JSON.stringify({ titulo }),
   });
-  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al crear conversación");
   return res.json();
 };
 
 export const renombrarConversacion = async (id, titulo) => {
-  const res = await fetch(`${CONVERSATIONS_URL}/${id}`, {
+  const res = await authFetch(`${CONVERSATIONS_URL}/${id}`, {
     method: "PUT",
-    headers: authHeaders(),
-    body: JSON.stringify({ titulo })
+    body: JSON.stringify({ titulo }),
   });
-  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al renombrar conversación");
   return res.json();
 };
 
 export const eliminarConversacion = async (id) => {
-  const res = await fetch(`${CONVERSATIONS_URL}/${id}`, {
+  const res = await authFetch(`${CONVERSATIONS_URL}/${id}`, {
     method: "DELETE",
-    headers: authHeaders()
   });
-  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al eliminar conversación");
   return res.json().catch(() => ({}));
 };
@@ -61,21 +76,16 @@ export const eliminarConversacion = async (id) => {
 // ─── MENSAJES ─────────────────────────────────────────────────────────────────
 
 export const obtenerMensajes = async (conversationId) => {
-  const res = await fetch(`${CONVERSATIONS_URL}/${conversationId}/messages`, {
-    headers: authHeaders()
-  });
-  checkUnauthorized(res);
+  const res = await authFetch(`${CONVERSATIONS_URL}/${conversationId}/messages`);
   if (!res.ok) throw new Error("Error al obtener mensajes");
   return res.json();
 };
 
 export const enviarMensaje = async (conversationId, content, onToken, onDone) => {
-  const res = await fetch(`${CONVERSATIONS_URL}/${conversationId}/messages`, {
+  const res = await authFetch(`${CONVERSATIONS_URL}/${conversationId}/messages`, {
     method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ content })
+    body: JSON.stringify({ content }),
   });
-  checkUnauthorized(res);
   if (!res.ok) throw new Error("Error al enviar mensaje");
 
   const reader  = res.body.getReader();
@@ -85,7 +95,6 @@ export const enviarMensaje = async (conversationId, content, onToken, onDone) =>
   const processLine = (line) => {
     const trimmed = line.trim();
     if (!trimmed) return;
-    // Quitar el prefijo "data: " del formato SSE
     const jsonStr = trimmed.startsWith("data: ") ? trimmed.slice(6) : trimmed;
     try {
       const event = JSON.parse(jsonStr);
@@ -103,21 +112,18 @@ export const enviarMensaje = async (conversationId, content, onToken, onDone) =>
     const { done, value } = await reader.read();
 
     if (done) {
-      // Procesar lo que quede en el buffer
       if (buffer.trim()) processLine(buffer);
       break;
     }
 
     buffer += decoder.decode(value, { stream: true });
-
     const lines = buffer.split("\n");
-    buffer = lines.pop(); // Guardar línea incompleta
+    buffer = lines.pop();
 
     for (const line of lines) {
       processLine(line);
     }
   }
 
-  // Fallback: si onDone nunca se llamó, llamarlo ahora
   onDone?.([]);
 };

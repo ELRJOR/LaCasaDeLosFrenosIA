@@ -23,7 +23,7 @@ const LoginPage = () => {
         try {
             const response = await loginAdmin(credentials);
             if (response.error) throw new Error(response.error);
-            localStorage.setItem('token', response.token);
+            // Ya no: localStorage.setItem('token', response.token);
             navigate('/dashboard', { state: { tab: 'AsistenteIA' } });
         } catch (err) {
             setError(err.message || 'Credenciales incorrectas');

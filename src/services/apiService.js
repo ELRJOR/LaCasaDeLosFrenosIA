@@ -3,13 +3,17 @@
 
 // Base URL para la API
 const BASE_URL = 'https://lacasadelosfrenos-api.onrender.com';
+const ADMIN_URL = `${BASE_URL}/admin`;
 
 // Rutas completas
 const API_URL = `${BASE_URL}/productos`;
 const CATEGORIAS_URL = `${BASE_URL}/categorias`;
-const ADMIN_URL = `${BASE_URL}/admin`;
 const CLIENTES_URL = `${BASE_URL}/clientes`;
 const PEDIDOS_URL = `${BASE_URL}/pedidos`;
+
+const jsonHeaders = { "Content-Type": "application/json" };
+
+let refreshPromise = null; // evita disparar múltiples refresh en paralelo
 
 // ─── SESIÓN EXPIRADA: si la API devuelve 401, limpiar token y redirigir ───────
 const checkUnauthorized = (res) => {
@@ -20,7 +24,42 @@ const checkUnauthorized = (res) => {
     }
 };
 
+const tryRefresh = async () => {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${ADMIN_URL}/refresh`, {
+      method: "POST",
+      credentials: "include",
+    }).finally(() => {
+      refreshPromise = null;
+    });
+  }
+  const res = await refreshPromise;
+  return res.ok;
+};
 
+const authFetch = async (url, options = {}) => {
+  const res = await fetch(url, {
+    ...options,
+    credentials: "include",
+    headers: { ...jsonHeaders, ...(options.headers || {}) },
+  });
+
+  if (res.status !== 401) return res;
+
+  const refreshed = await tryRefresh();
+
+  if (!refreshed) {
+    window.location.href = "/loginAdmin";
+    throw new Error("Sesión expirada");
+  }
+
+  // Reintenta la request original una sola vez con la cookie renovada
+  return fetch(url, {
+    ...options,
+    credentials: "include",
+    headers: { ...jsonHeaders, ...(options.headers || {}) },
+  });
+};
 
 export const fetchProductos = async () => {
     try {
@@ -259,27 +298,22 @@ export const loginAdmin = async (credentials) => {
     try {
         const response = await fetch(`${ADMIN_URL}/login`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            credentials: 'include', // ← nuevo
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials)
         });
 
-        // Si el código de respuesta no está en el rango 200–299
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Credenciales incorrectas');
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
 
     } catch (error) {
         if (error.name === 'TypeError') {
-            // Error de red o servidor no respondió
             throw new Error('No se recibió respuesta del servidor');
         } else {
-            // Otro tipo de error (como el lanzado arriba)
             throw new Error(error.message || 'Error al configurar la solicitud');
         }
     }
@@ -526,13 +560,11 @@ export const registrarMecanico = async (datos) => {
 
 export const mostrarCitas = async () => {
     try {
-        const token = localStorage.getItem('token'); // ajusta la key si le pusiste otro nombre
-
         const response = await fetch(`${BASE_URL}/citas`, {
             method: 'GET',
+            credentials: 'include', // reemplaza el header Authorization
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
         }); 
 
