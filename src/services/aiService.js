@@ -2,6 +2,10 @@ const BASE_URL = "https://lacasadelosfrenos-api.onrender.com";
 const ADMIN_URL = `${BASE_URL}/admin`;
 const CONVERSATIONS_URL = `${BASE_URL}/conversations`;
 
+let refreshPromise = null;
+
+const JSON_HEADERS = { "Content-Type": "application/json" };
+
 const tryRefresh = async () => {
   if (!refreshPromise) {
     refreshPromise = fetch(`${ADMIN_URL}/refresh`, {
@@ -19,7 +23,7 @@ const authFetch = async (url, options = {}) => {
   const res = await fetch(url, {
     ...options,
     credentials: "include",
-    headers: { ...jsonHeaders, ...(options.headers || {}) },
+    headers: { ...JSON_HEADERS, ...(options.headers || {}) },
   });
 
   if (res.status !== 401) return res;
@@ -35,7 +39,7 @@ const authFetch = async (url, options = {}) => {
   return fetch(url, {
     ...options,
     credentials: "include",
-    headers: { ...jsonHeaders, ...(options.headers || {}) },
+    headers: { ...JSON_HEADERS, ...(options.headers || {}) },
   });
 };
 
