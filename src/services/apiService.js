@@ -1,11 +1,6 @@
-
-
-
-// Base URL para la API
 const BASE_URL = 'https://lacasadelosfrenos-api.onrender.com';
 const ADMIN_URL = `${BASE_URL}/admin`;
 
-// Rutas completas
 const API_URL = `${BASE_URL}/productos`;
 const CATEGORIAS_URL = `${BASE_URL}/categorias`;
 const CLIENTES_URL = `${BASE_URL}/clientes`;
@@ -13,16 +8,7 @@ const PEDIDOS_URL = `${BASE_URL}/pedidos`;
 
 const jsonHeaders = { "Content-Type": "application/json" };
 
-let refreshPromise = null; // evita disparar múltiples refresh en paralelo
-
-// ─── SESIÓN EXPIRADA: si la API devuelve 401, limpiar token y redirigir ───────
-const checkUnauthorized = (res) => {
-    if (res.status === 401) {
-        localStorage.removeItem('token');
-        window.location.href = '/loginAdmin';
-        throw new Error('Sesión expirada');
-    }
-};
+let refreshPromise = null;
 
 const tryRefresh = async () => {
   if (!refreshPromise) {
@@ -38,10 +24,15 @@ const tryRefresh = async () => {
 };
 
 const authFetch = async (url, options = {}) => {
+  const isFormData = options.body instanceof FormData;
+  const headers = isFormData
+    ? { ...(options.headers || {}) }
+    : { ...jsonHeaders, ...(options.headers || {}) };
+
   const res = await fetch(url, {
     ...options,
     credentials: "include",
-    headers: { ...jsonHeaders, ...(options.headers || {}) },
+    headers,
   });
 
   if (res.status !== 401) return res;
@@ -53,21 +44,19 @@ const authFetch = async (url, options = {}) => {
     throw new Error("Sesión expirada");
   }
 
-  // Reintenta la request original una sola vez con la cookie renovada
   return fetch(url, {
     ...options,
     credentials: "include",
-    headers: { ...jsonHeaders, ...(options.headers || {}) },
+    headers,
   });
 };
 
+// ─── PRODUCTOS ───────────────────────────────────────────────────────────────
+
 export const fetchProductos = async () => {
     try {
-        const response = await fetch(API_URL);
-        checkUnauthorized(response);
-        if (!response.ok) {
-            throw new Error('Error al obtener productos');
-        }
+        const response = await authFetch(API_URL);
+        if (!response.ok) throw new Error('Error al obtener productos');
         return await response.json();
     } catch (error) {
         console.error(error);
@@ -75,25 +64,22 @@ export const fetchProductos = async () => {
     }
 };
 
-// Crear producto
 export async function crearProducto(producto) {
     try {
         const formData = new FormData();
         formData.append('nombre', producto.nombre);
         formData.append('descripcion', producto.descripcion);
-
         formData.append('imagen', producto.imagen);
         formData.append('stock', producto.stock);
         formData.append('categoria_id', producto.categoria_id);
         formData.append('medidas', JSON.stringify(producto.medidas));
         formData.append('caracteristicas', JSON.stringify(producto.caracteristicas));
 
-        const res = await fetch(`${API_URL}`, {
+        const res = await authFetch(API_URL, {
             method: 'POST',
             body: formData
         });
 
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             throw new Error(errorData.error || 'Error al crear producto');
@@ -106,13 +92,11 @@ export async function crearProducto(producto) {
     }
 }
 
-// Actualizar producto
 export async function actualizarProducto(id, producto) {
     try {
         const formData = new FormData();
         formData.append('nombre', producto.nombre);
         formData.append('descripcion', producto.descripcion);
-
         formData.append('stock', producto.stock);
         formData.append('categoria_id', producto.categoria_id);
         if (producto.imagen) {
@@ -121,12 +105,11 @@ export async function actualizarProducto(id, producto) {
         formData.append('medidas', JSON.stringify(producto.medidas));
         formData.append('caracteristicas', JSON.stringify(producto.caracteristicas));
 
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await authFetch(`${API_URL}/${id}`, {
             method: 'PUT',
             body: formData
         });
 
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
             throw new Error(errorData.error || 'Error al actualizar producto');
@@ -139,27 +122,18 @@ export async function actualizarProducto(id, producto) {
     }
 }
 
-// Eliminar producto
 export async function eliminarProducto(id) {
     try {
-        console.log(`Intentando eliminar el producto con ID: ${id}`);
-
-        const res = await fetch(`${API_URL}/${id}`, {
+        const res = await authFetch(`${API_URL}/${id}`, {
             method: 'DELETE',
         });
 
-        console.log(`Respuesta del servidor: ${res.status} - ${res.statusText}`);
-
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            console.error(`Error al eliminar producto: ${errorData.error || 'Error desconocido'}`);
             throw new Error(errorData.error || 'Error al eliminar producto');
         }
 
-        const responseData = await res.json();
-        console.log('Producto eliminado exitosamente:', responseData);
-        return responseData;
+        return await res.json();
     } catch (error) {
         console.error('Error en la función eliminarProducto:', error);
         throw error;
@@ -168,11 +142,8 @@ export async function eliminarProducto(id) {
 
 export async function obtenerProductoPorId(id) {
     try {
-        const res = await fetch(`${API_URL}/${id}`);
-        checkUnauthorized(res);
-        if (!res.ok) {
-            throw new Error('Error al obtener el producto');
-        }
+        const res = await authFetch(`${API_URL}/${id}`);
+        if (!res.ok) throw new Error('Error al obtener el producto');
         return await res.json();
     } catch (error) {
         console.error('Error en obtenerProductoPorId:', error);
@@ -180,17 +151,13 @@ export async function obtenerProductoPorId(id) {
     }
 }
 
+// ─── CATEGORÍAS ──────────────────────────────────────────────────────────────
+
 export const obtenerCategorias = async () => {
     try {
-        const res = await fetch(CATEGORIAS_URL);
-        checkUnauthorized(res);
-        if (!res.ok) {
-            throw new Error('Error al obtener categorías');
-        }
-
-        const categorias = await res.json();
-        console.log('Categorías obtenidas:', categorias);
-        return categorias;
+        const res = await authFetch(CATEGORIAS_URL);
+        if (!res.ok) throw new Error('Error al obtener categorías');
+        return await res.json();
     } catch (error) {
         console.error('Error en la función obtenerCategorias:', error);
         throw error;
@@ -199,43 +166,28 @@ export const obtenerCategorias = async () => {
 
 export async function obtenerCategoriaPorId(id) {
     try {
-        const res = await fetch(`${CATEGORIAS_URL}/${id}`);
-        checkUnauthorized(res);
-        if (!res.ok) {
-            throw new Error(`Error al obtener la categoría con ID: ${id}`);
-        }
-
-        const categoria = await res.json();
-        console.log('Categoría obtenida:', categoria);
-        return categoria;
+        const res = await authFetch(`${CATEGORIAS_URL}/${id}`);
+        if (!res.ok) throw new Error(`Error al obtener la categoría con ID: ${id}`);
+        return await res.json();
     } catch (error) {
         console.error(`Error en la función obtenerCategoriaPorId (ID: ${id}):`, error);
         throw error;
     }
 }
 
-
-// Crear categoría
 export async function crearCategoria(nombre) {
     try {
-        const res = await fetch(CATEGORIAS_URL, {
+        const res = await authFetch(CATEGORIAS_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify({ nombre }),
         });
 
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            console.error(`Error al crear categoría: ${errorData.error || 'Error desconocido'}`);
             throw new Error(errorData.error || 'Error al crear categoría');
         }
 
-        const responseData = await res.json();
-        console.log('Categoría creada exitosamente:', responseData);
-        return responseData;
+        return await res.json();
     } catch (error) {
         console.error('Error en la función crearCategoria:', error);
         throw error;
@@ -244,24 +196,17 @@ export async function crearCategoria(nombre) {
 
 export async function actualizarCategoria(id, nombre) {
     try {
-        const res = await fetch(`${CATEGORIAS_URL}/${id}`, {
+        const res = await authFetch(`${CATEGORIAS_URL}/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             body: JSON.stringify({ nombre }),
         });
 
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            console.error(`Error al actualizar la categoría con ID: ${id} - ${errorData.error || 'Error desconocido'}`);
             throw new Error(errorData.error || 'Error al actualizar categoría');
         }
 
-        const responseData = await res.json();
-        console.log('Categoría actualizada exitosamente:', responseData);
-        return responseData;
+        return await res.json();
     } catch (error) {
         console.error(`Error en la función actualizarCategoria (ID: ${id}):`, error);
         throw error;
@@ -270,35 +215,29 @@ export async function actualizarCategoria(id, nombre) {
 
 export async function eliminarCategoria(id) {
     try {
-        const res = await fetch(`${CATEGORIAS_URL}/${id}`, {
+        const res = await authFetch(`${CATEGORIAS_URL}/${id}`, {
             method: 'DELETE',
         });
 
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({ error: 'Error desconocido' }));
-            console.error(`Error al eliminar categoría con ID: ${id} - ${errorData.error || 'Error desconocido'}`);
             throw new Error(errorData.error || 'Error al eliminar categoría');
         }
 
-        const responseData = await res.json();
-        console.log('Categoría eliminada exitosamente:', responseData);
-        return responseData;
+        return await res.json();
     } catch (error) {
         console.error(`Error en la función eliminarCategoria (ID: ${id}):`, error);
         throw error;
     }
-
 }
 
-
-//Rutas de administradores
+// ─── ADMIN ───────────────────────────────────────────────────────────────────
 
 export const loginAdmin = async (credentials) => {
     try {
         const response = await fetch(`${ADMIN_URL}/login`, {
             method: 'POST',
-            credentials: 'include', // ← nuevo
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(credentials)
         });
@@ -309,7 +248,6 @@ export const loginAdmin = async (credentials) => {
         }
 
         return await response.json();
-
     } catch (error) {
         if (error.name === 'TypeError') {
             throw new Error('No se recibió respuesta del servidor');
@@ -318,11 +256,36 @@ export const loginAdmin = async (credentials) => {
         }
     }
 };
- //Rutas de clientes
- export async function obtenerClientes() {
+
+export const registrarMecanico = async (datos) => {
     try {
-        const res = await fetch(CLIENTES_URL);
-        checkUnauthorized(res);
+        const response = await fetch(`${ADMIN_URL}/registro-mecanico`, {
+            method: 'POST',
+            credentials: 'include', // ← agregado, faltaba
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al registrar');
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error.name === 'TypeError') {
+            throw new Error('No se recibió respuesta del servidor');
+        } else {
+            throw new Error(error.message || 'Error al configurar la solicitud');
+        }
+    }
+};
+
+// ─── CLIENTES ────────────────────────────────────────────────────────────────
+
+export async function obtenerClientes() {
+    try {
+        const res = await authFetch(CLIENTES_URL);
         if (!res.ok) throw new Error('Error al obtener los clientes');
         return await res.json();
     } catch (error) {
@@ -333,8 +296,7 @@ export const loginAdmin = async (credentials) => {
 
 export async function obtenerClientePorId(id) {
     try {
-        const res = await fetch(`${CLIENTES_URL}/${id}`);
-        checkUnauthorized(res);
+        const res = await authFetch(`${CLIENTES_URL}/${id}`);
         if (!res.ok) throw new Error('Error al obtener el cliente');
         return await res.json();
     } catch (error) {
@@ -345,15 +307,11 @@ export async function obtenerClientePorId(id) {
 
 export async function crearCliente(cliente) {
     try {
-        const res = await fetch(CLIENTES_URL, {
+        const res = await authFetch(CLIENTES_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(cliente)
         });
 
-        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al crear cliente');
         return await res.json();
     } catch (error) {
@@ -364,15 +322,11 @@ export async function crearCliente(cliente) {
 
 export async function actualizarCliente(id, cliente) {
     try {
-        const res = await fetch(`${CLIENTES_URL}/${id}`, {
+        const res = await authFetch(`${CLIENTES_URL}/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(cliente)
         });
 
-        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al actualizar cliente');
         return await res.json();
     } catch (error) {
@@ -383,11 +337,10 @@ export async function actualizarCliente(id, cliente) {
 
 export async function eliminarCliente(id) {
     try {
-        const res = await fetch(`${CLIENTES_URL}/${id}`, {
+        const res = await authFetch(`${CLIENTES_URL}/${id}`, {
             method: 'DELETE'
         });
 
-        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al eliminar cliente');
         return await res.json();
     } catch (error) {
@@ -396,24 +349,19 @@ export async function eliminarCliente(id) {
     }
 }
 
+// ─── PEDIDOS ─────────────────────────────────────────────────────────────────
 
-
-//Rutas de pedidos
 export async function crearPedido({ cliente_id, observaciones, productos, fecha, estado }) {
     try {
         const body = { cliente_id, observaciones, productos };
         if (fecha) body.fecha = fecha;
         if (estado) body.estado = estado;
 
-        const res = await fetch(PEDIDOS_URL, {
+        const res = await authFetch(PEDIDOS_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(body)
         });
 
-        checkUnauthorized(res);
         if (!res.ok) {
             const errorData = await res.json();
             throw new Error(errorData.error || 'Error al crear el pedido');
@@ -426,76 +374,34 @@ export async function crearPedido({ cliente_id, observaciones, productos, fecha,
     }
 }
 
-
 export async function actualizarPedido(id, { cliente_id, productos, fecha, estado, observaciones }) {
-    console.log('🟡 [actualizarPedido] llamada iniciada');
-    console.log('🧾 ID del pedido a actualizar:', id);
+    if (!id) throw new Error('ID del pedido es obligatorio');
+    if (!cliente_id) throw new Error('El cliente_id es obligatorio');
+    if (!Array.isArray(productos) || productos.length === 0) throw new Error('Debes enviar al menos un producto');
 
-    // Validación básica
-    if (!id) {
-        console.error('❌ ID del pedido no proporcionado');
-        throw new Error('ID del pedido es obligatorio');
-    }
-
-    if (!cliente_id) {
-        console.error('❌ cliente_id faltante');
-        throw new Error('El cliente_id es obligatorio');
-    }
-
-    if (!Array.isArray(productos) || productos.length === 0) {
-        console.error('❌ Productos no válidos o vacíos:', productos);
-        throw new Error('Debes enviar al menos un producto');
-    }
-
-    // Construcción del body completo, sin condicionales
-    const body = {
-        cliente_id,
-        productos,
-        fecha,
-        estado,
-        observaciones
-    };
-
-    const url = `${PEDIDOS_URL}/${id}`;
-
-
-    console.log('🌐 URL usada en fetch:', url);
-    console.log('📦 Datos enviados al backend (payload completo):', JSON.stringify(body, null, 2));
+    const body = { cliente_id, productos, fecha, estado, observaciones };
 
     try {
-        const response = await fetch(url, {
+        const response = await authFetch(`${PEDIDOS_URL}/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(body)
         });
 
-        console.log('📬 Status de respuesta del backend:', response.status);
-
-        checkUnauthorized(response);
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('❌ Error recibido del servidor:', errorData);
             throw new Error(errorData.error || 'Error desconocido al actualizar el pedido');
         }
 
-        const data = await response.json();
-        console.log('✅ Pedido actualizado correctamente. Respuesta final del backend:', data);
-        return data;
-
+        return await response.json();
     } catch (error) {
-        console.error('💥 Error en actualizarPedido (API):', error.message || error);
+        console.error('Error en actualizarPedido (API):', error.message || error);
         throw error;
     }
 }
 
-
-
 export async function obtenerPedidos() {
     try {
-        const res = await fetch(PEDIDOS_URL);
-        checkUnauthorized(res);
+        const res = await authFetch(PEDIDOS_URL);
         if (!res.ok) throw new Error('Error al obtener pedidos');
         return await res.json();
     } catch (error) {
@@ -506,8 +412,7 @@ export async function obtenerPedidos() {
 
 export async function obtenerPedidoPorId(id) {
     try {
-        const res = await fetch(`${PEDIDOS_URL}/${id}`);
-        checkUnauthorized(res);
+        const res = await authFetch(`${PEDIDOS_URL}/${id}`);
         if (!res.ok) throw new Error('Error al obtener el pedido');
         return await res.json();
     } catch (error) {
@@ -518,11 +423,10 @@ export async function obtenerPedidoPorId(id) {
 
 export async function eliminarPedido(id) {
     try {
-        const res = await fetch(`${PEDIDOS_URL}/${id}`, {
+        const res = await authFetch(`${PEDIDOS_URL}/${id}`, {
             method: 'DELETE'
         });
 
-        checkUnauthorized(res);
         if (!res.ok) throw new Error('Error al eliminar pedido');
         return await res.json();
     } catch (error) {
@@ -531,51 +435,16 @@ export async function eliminarPedido(id) {
     }
 }
 
-export const registrarMecanico = async (datos) => {
-    try {
-        const response = await fetch(`${ADMIN_URL}/registro-mecanico`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datos)
-        }); 
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Error al registrar');
-        }
-
-        const data = await response.json();
-        return data;
-
-    } catch (error) {
-        if (error.name === 'TypeError') {
-            throw new Error('No se recibió respuesta del servidor');
-        } else {
-            throw new Error(error.message || 'Error al configurar la solicitud');
-        }
-    }
-};
+// ─── CITAS ───────────────────────────────────────────────────────────────────
 
 export const mostrarCitas = async () => {
     try {
-        const response = await fetch(`${BASE_URL}/citas`, {
-            method: 'GET',
-            credentials: 'include', // reemplaza el header Authorization
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }); 
-
+        const response = await authFetch(`${BASE_URL}/citas`);
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Error al mostrar');
         }
-
-        const data = await response.json();
-        return data;
-
+        return await response.json();
     } catch (error) {
         if (error.name === 'TypeError') {
             throw new Error('No se recibió respuesta del servidor');
