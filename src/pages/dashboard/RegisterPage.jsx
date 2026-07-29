@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { registrarMecanico } from '../../services/apiService';
 import { FiUser, FiLock, FiMail, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Turnstile } from "@marsidev/react-turnstile";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -22,6 +23,8 @@ const RegisterPage = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const [captchaToken, setCaptchaToken] = useState("");
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -36,9 +39,17 @@ const RegisterPage = () => {
             return;
         }
 
+        if (!captchaToken) {
+            setError("Completa la verificación de seguridad.");
+            return;
+        }
+
         setIsLoading(true);
         try {
-            await registrarMecanico(formData);
+            await registrarMecanico({
+                ...formData,
+                captchaToken
+            });
             setSuccess(true);
             setTimeout(() => {
                 navigate('/loginAdmin');
@@ -194,7 +205,13 @@ const RegisterPage = () => {
                             </div>
                         </div>
 
-                        <div className="pt-2">
+                        <div className="flex flex-col items-center pt-2 gap-4">
+                            <Turnstile
+                                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                                onSuccess={(token) => setCaptchaToken(token)}
+                                onExpire={() => setCaptchaToken("")}
+                                onError={() => setCaptchaToken("")}
+                            />
                             <button
                                 type="submit"
                                 disabled={isLoading || success}
